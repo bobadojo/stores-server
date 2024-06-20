@@ -1,5 +1,5 @@
-github.com/bobadojo/go v0.0.0-20240619223900-0961aac6fdd9 h1:eUmLrHXzYnN7vgZLJabHFfWx/UX0Kfm0rJbjN+6hf7k=
-github.com/bobadojo/go v0.0.0-20240619223900-0961aac6fdd9/go.mod h1:oCYCYEV06RAyz3nrbQPk/B2amEIIbiNyTw1Tkk1cJCs=
+github.com/bobadojo/go v0.0.1 h1:QD3aOoHAzQU20k32zEXvNUmja/hBOj5g6JSBiLYW0CI=
+github.com/bobadojo/go v0.0.1/go.mod h1:E9iGT/RP9PCYAlJ9ORDwHt5TP3BwZ0AssCz0O8aHsMU=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 golang.org/x/net v0.26.0 h1:soB7SVo0PWrY4vPW/+ay0jKDNScG2X9wFeYlXIvJsOQ=

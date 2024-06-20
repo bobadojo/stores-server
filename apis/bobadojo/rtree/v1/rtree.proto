@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package bobadojo.rtree.v1;
+
+option go_package = "github.com/bobadojo/stores-server/pkg/rtreepb;rtreepb";
+
+message Node {
+    BoundingBox bounds = 1;
+    repeated Node children = 2;
+    repeated Leaf leaves = 3;
+}
+
+message Leaf {
+    string name = 1;
+    Location location = 2;
+}
+
+// A location in terrestrial coordinates.
+message Location {
+  // Latitude of the location.
+  float latitude = 1;
+  // Longitude of the location.
+  float longitude = 2;
+}
+
+// A bounding box in terrestrial coordinates.
+message BoundingBox {
+  // Maximum coordinate values.
+  Location max = 1;
+  // Minimum coordinate values.
+  Location min = 2;
+}

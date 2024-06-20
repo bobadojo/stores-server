@@ -3,7 +3,7 @@ module github.com/bobadojo/stores-server
 go 1.22.3
 
 require (
-	github.com/bobadojo/go v0.0.0-20240619223900-0961aac6fdd9
+	github.com/bobadojo/go v0.0.1
 	google.golang.org/grpc v1.64.0
 )
 
