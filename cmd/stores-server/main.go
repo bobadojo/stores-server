@@ -9,11 +9,11 @@ import (
 	"google.golang.org/grpc"
 )
 
-type storesServer struct {
-	storespb.UnimplementedStoresServer
-}
-
 func main() {
+	storesServer, err := NewStoresServer()
+	if err != nil {
+		log.Fatal(err)
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -24,7 +24,7 @@ func main() {
 	}
 	log.Printf("listening on port %s", port)
 	grpcServer := grpc.NewServer()
-	storespb.RegisterStoresServer(grpcServer, &storesServer{})
+	storespb.RegisterStoresServer(grpcServer, storesServer)
 	if err = grpcServer.Serve(lis); err != nil {
 		log.Fatal(err)
 	}
