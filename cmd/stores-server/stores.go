@@ -24,7 +24,7 @@ type storesServer struct {
 }
 
 func NewStoresServer() (*storesServer, error) {
-	stores, err := readStores("data/us_post_offices_01-27-23-sample.csv")
+	stores, err := readStores("data/us-postoffices.csv")
 	if err != nil {
 		return nil, err
 	}
@@ -48,22 +48,22 @@ func readStores(filename string) ([]*storespb.Store, error) {
 			return nil, err
 		}
 		store := &storespb.Store{
+// United States Post Office,401,North Ashley Drive,Tampa,FL,33602,27.9473718,-82.4595414
+
 			Name:  fields[0],
-			Type:  fields[1],
-			Title: fields[2],
+			Type:  "office",
+			Title: fields[0],
 			Location: &storespb.Location{
-				Latitude:  atof(fields[10]),
-				Longitude: atof(fields[11]),
+				Latitude:  atof(fields[6]),
+				Longitude: atof(fields[7]),
 			},
 			Address: &storespb.Address{
-				Street:     fields[3],
-				City:       fields[4],
-				State:      fields[5],
-				ZipCode:    atoi(fields[6]),
-				RegionCode: fields[13],
-				County:     fields[14],
+				Street:     fields[2],
+				City:       fields[3],
+				State:      fields[4],
+				ZipCode:    atoi(fields[5]),
+				RegionCode: "us",
 			},
-			StoreHours: fields[9],
 		}
 		stores = append(stores, store)
 	}
@@ -73,7 +73,7 @@ func readStores(filename string) ([]*storespb.Store, error) {
 func atoi(s string) int32 {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		log.Fatalf("%s", err)
+		return 0
 	}
 	return int32(i)
 }
