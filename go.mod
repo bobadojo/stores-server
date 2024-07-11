@@ -1,6 +1,6 @@
 module github.com/bobadojo/stores-server
 
-go 1.22.3
+go 1.22.5
 
 require (
 	github.com/bobadojo/go v0.0.3

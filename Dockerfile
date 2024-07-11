@@ -1,4 +1,4 @@
-FROM golang:1.20.1 as builder
+FROM golang:1.22.5 as builder
 WORKDIR /app
 COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build -v -o stores-server ./cmd/stores-server
