@@ -24,7 +24,7 @@ type storesServer struct {
 }
 
 func NewStoresServer() (*storesServer, error) {
-	stores, err := readStores("data/us-postoffices.csv")
+	stores, err := readStores("data/stores.csv")
 	if err != nil {
 		return nil, err
 	}
