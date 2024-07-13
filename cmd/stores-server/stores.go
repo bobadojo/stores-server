@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/base64"
 	"encoding/csv"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"log"
@@ -48,9 +50,9 @@ func readStores(filename string) ([]*storespb.Store, error) {
 			return nil, err
 		}
 		store := &storespb.Store{
-// United States Post Office,401,North Ashley Drive,Tampa,FL,33602,27.9473718,-82.4595414
+			// United States Post Office,401,North Ashley Drive,Tampa,FL,33602,27.9473718,-82.4595414
 
-			Name:  fields[0],
+			Name:  idFromField(fields[0]),
 			Type:  "office",
 			Title: fields[0],
 			Location: &storespb.Location{
@@ -68,6 +70,11 @@ func readStores(filename string) ([]*storespb.Store, error) {
 		stores = append(stores, store)
 	}
 	return stores, nil
+}
+
+func idFromField(s string) string {
+	hash := md5.Sum([]byte(s))
+	return "stores/" + hex.EncodeToString(hash[:])[0:8]
 }
 
 func atoi(s string) int32 {
