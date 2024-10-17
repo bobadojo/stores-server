@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: stores
+  name: stores
+  namespace: bobadojo
+spec:
+  selector:
+    matchLabels:
+      run: stores
+  template:
+    metadata:
+      labels:
+        run: stores
+    spec:
+      volumes:
+        - name: service-account-creds
+          secret:
+            secretName: service-account-creds
+      containers:
+      - name: stores
+        image: ghcr.io/bobadojo/stores-server:latest
+      restartPolicy: Always
+      nodeSelector:
+        kubernetes.io/arch: amd64
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: stores
+  name: stores
+  namespace: bobadojo
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: stores
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stores
+  namespace: bobadojo
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/proxy-body-size: 8m
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+      - stores.timbx.me
+    secretName: stores-tls
+  rules:
+  - host: stores.timbx.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: stores
+            port: 
+              number: 80

@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: stores
+  name: stores
+  namespace: bobadojo
+spec:
+  selector:
+    matchLabels:
+      run: stores
+  template:
+    metadata:
+      labels:
+        run: stores
+    spec:
+      volumes:
+        - name: service-account-creds
+          secret:
+            secretName: service-account-creds
+      containers:
+      - name: stores
+        image: ghcr.io/bobadojo/stores-server:latest
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        #image: ghcr.io/timburks/esp:latest
+        args: [
+          "--http2_port=8081",
+          "--backend=grpc://127.0.0.1:8080",
+          "--service=stores.endpoints.bobadojo.cloud.goog",
+          "--rollout_strategy=managed",
+          "--non_gcp",
+          "--service_account_key=/etc/nginx/creds/service-account-creds.json"
+        ]
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8081
+        volumeMounts:
+          - mountPath: /etc/nginx/creds
+            name: service-account-creds
+            readOnly: true
+      restartPolicy: Always
+      nodeSelector:
+        kubernetes.io/arch: amd64
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: stores
+  name: stores
+  namespace: bobadojo
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    run: stores
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stores
+  namespace: bobadojo
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/proxy-body-size: 8m
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+      - stores.timbx.me
+    secretName: stores-tls
+  rules:
+  - host: stores.timbx.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: stores
+            port: 
+              number: 80
