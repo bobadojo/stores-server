@@ -69,6 +69,7 @@ spec:
   tls:
   - hosts:
       - stores.timbx.me
+      - stores.endpoints.bobadojo.cloud.goog
     secretName: stores-tls
   rules:
   - host: stores.timbx.me
@@ -79,5 +80,15 @@ spec:
         backend:
           service:
             name: stores
-            port: 
+            port:
+              number: 80
+  - host: stores.endpoints.bobadojo.cloud.goog
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: stores
+            port:
               number: 80
