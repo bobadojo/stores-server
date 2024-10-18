@@ -4,10 +4,12 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand/v2"
 
 	pb "github.com/bobadojo/go/pkg/stores/v1/storespb"
 	"golang.org/x/oauth2/google"
@@ -93,33 +95,46 @@ func run() error {
 		ctx = metadata.AppendToOutgoingContext(ctx, "Authorization", fmt.Sprintf("Bearer %s", *token))
 	}
 
-	// Contact the server and print out its response.
-	r, err := c.FindStores(ctx, &pb.FindStoresRequest{
+	minLat := 39.0 + float32(rand.Uint32()%100)/100.0
+	minLng := -85.0 + float32(rand.Uint32()%100)/100.0
+
+	deltaLat := float32(0.5)
+	deltaLng := float32(0.5)
+
+	req := &pb.FindStoresRequest{
 		Bounds: &pb.BoundingBox{
 			Max: &pb.Location{
-				Latitude:  26.2,
-				Longitude: -80,
+				Latitude:  minLat + deltaLat,
+				Longitude: minLng + deltaLng,
 			},
 			Min: &pb.Location{
-				Latitude:  26.1,
-				Longitude: -81,
+				Latitude:  minLat,
+				Longitude: minLng,
 			},
 		},
-	})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Stores: %d", len(r.Stores))
-	for i, s := range r.Stores {
-		log.Printf("%v", s)
+	log.Printf("%+v", req)
 
+	// Contact the server and print out its response.
+	r, err := c.FindStores(ctx, req)
+	if err != nil {
+		return err
+	}
+	log.Printf("%d stores", r.Count)
+	for i, s := range r.Stores {
 		r2, err := c.GetStore(ctx, &pb.GetStoreRequest{
 			Name: s.Name,
 		})
 		if err != nil {
 			return err
 		}
-		log.Printf("%d: %+v", i, r2)
+
+		b, err := json.Marshal(r2)
+		if err != nil {
+			return err
+		}
+		log.Printf("%d: %s", i, string(b))
+
 	}
 	return nil
 }
