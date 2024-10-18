@@ -23,13 +23,11 @@ spec:
         image: ghcr.io/bobadojo/stores-server:latest
       - name: esp
         image: gcr.io/endpoints-release/endpoints-runtime:1
-        #image: ghcr.io/timburks/esp:latest
         args: [
           "--http2_port=8081",
           "--backend=grpc://127.0.0.1:8080",
           "--service=stores.endpoints.bobadojo.cloud.goog",
           "--rollout_strategy=managed",
-          "--non_gcp",
           "--service_account_key=/etc/nginx/creds/service-account-creds.json"
         ]
         imagePullPolicy: Always
