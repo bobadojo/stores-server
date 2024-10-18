@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 
 	pb "github.com/bobadojo/go/pkg/stores/v1/storespb"
 	"golang.org/x/oauth2/google"
@@ -46,13 +45,8 @@ func run() error {
 			log.Fatalf("did not connect: %v", err)
 		}
 	} else {
-		proxyCA := "roots.pem" // CA cert that signed the proxy
-		f, err := os.ReadFile(proxyCA)
-		if err != nil {
-			log.Fatalf("%v", err)
-		}
 		p := x509.NewCertPool()
-		p.AppendCertsFromPEM(f)
+		p.AppendCertsFromPEM([]byte(roots))
 		tlsConfig := &tls.Config{
 			RootCAs:            p,
 			InsecureSkipVerify: true,
