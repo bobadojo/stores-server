@@ -23,3 +23,5 @@ spec:
             - secretRef:
                 name: apikey
           restartPolicy: OnFailure
+          nodeSelector:
+            kubernetes.io/arch: arm64
