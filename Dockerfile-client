@@ -1,0 +1,10 @@
+FROM golang:1.22.5 as builder
+WORKDIR /app
+COPY . ./
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o stores-client ./cmd/stores-client
+
+FROM alpine:3
+RUN apk add --no-cache ca-certificates
+COPY --from=builder /app/stores-client /usr/local/bin/stores-client
+COPY --from=builder /app/roots.pem /roots.pem
+ENTRYPOINT ["/usr/local/bin/stores-client"]
